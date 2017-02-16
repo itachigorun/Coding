@@ -1,5 +1,5 @@
 /* 2017-02-14  */
-/* create thread,gcc -o test pthread_create.c pthread  */
+/* create thread,gcc -o test pthread_create.c -pthread  */
 #include <stdio.h>
 #include <pthread.h>
 
