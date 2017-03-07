@@ -51,7 +51,7 @@ int main(void){
                 perror("fork");  
                 return -1;  
         }else if(pid == 0){  
-                status /= 0;  
+           //     status /= 0;  
         }  
         if(wait(&status) != pid){  
                 perror("wait");  
