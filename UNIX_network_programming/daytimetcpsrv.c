@@ -7,11 +7,12 @@
 
 #define SA struct sockaddr
 #define MAXLINE 4096
+#define LISTENQ 1024
 
 int main(int argc, char **argv)
 {
     int listenfd, connfd;
-    struct sockadd_in servaddr;
+    struct sockaddr_in servaddr;
     char buff[MAXLINE];
     time_t ticks;
 
@@ -22,7 +23,7 @@ int main(int argc, char **argv)
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(13);
 
-    bind(listenfd, (SA)&servaddr, sizeof(servaddr));
+    bind(listenfd, (SA *)&servaddr, sizeof(servaddr));
 
     listen(listenfd, LISTENQ);
 
@@ -30,10 +31,10 @@ int main(int argc, char **argv)
         connfd = accept(listenfd, (SA*)NULL,NULL);
 
         ticks = time(NULL);
-        snprintf(buff, sizeof(buf), "%.24s\r\n", ctime(&ticks));
+        snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
         write(connfd, buff, strlen(buff));
 
-        close(confd);
+        close(connfd);
     }
 
     return 0;
