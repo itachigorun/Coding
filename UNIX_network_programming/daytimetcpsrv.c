@@ -11,10 +11,10 @@
 
 int main(int argc, char **argv)
 {
-    int    listenfd, connfd;
-    struct sockaddr_in servaddr;
-    char   buff[MAXLINE];
-    time_t ticks;
+    int                 listenfd, connfd;
+    struct sockaddr_in  servaddr;
+    char                buff[MAXLINE];
+    time_t              ticks;
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     listen(listenfd, LISTENQ);
 
     for( ; ; ){
-        connfd = accept(listenfd, (SA*)NULL,NULL);
+        connfd = accept(listenfd, (SA*)NULL, NULL);
 
         ticks = time(NULL);
         snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
