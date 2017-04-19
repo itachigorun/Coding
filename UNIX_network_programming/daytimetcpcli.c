@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
     if(connect(sockfd, (SA *)&servaddr, sizeof(servaddr)) < 0) printf("connect error");
 
-    while((n = read(sockfd, recvline, MAXLINE)) < 0){
+    while((n = read(sockfd, recvline, MAXLINE)) > 0){
         recvline[n] = 0;
         if(fputs(recvline, stdout) == EOF)
             printf("fputs error\n");
