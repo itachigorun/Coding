@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     memset(&servaddr, 0, sizeof(servaddr));  
     servaddr.sin_family = AF_INET;  
     servaddr.sin_port = htons(8000);  
-    if( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0){ //inet_ptonÊÇLinuxÏÂIPµØÖ·×ª»»º¯Êý£¬½«IPµØÖ·ÔÚ¡°µã·ÖÊ®½øÖÆ¡±ºÍ¡°ÕûÊý¡±Ö®¼ä×ª»»
+    if( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0){ //inet_ptonæ˜¯Linuxä¸‹IPåœ°å€è½¬æ¢å‡½æ•°ï¼Œå°†IPåœ°å€åœ¨â€œç‚¹åˆ†åè¿›åˆ¶â€å’Œâ€œæ•´æ•°â€ä¹‹é—´è½¬æ¢
         printf("inet_pton error for %s\n",argv[1]);  
         exit(0);  
     }  

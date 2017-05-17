@@ -12,37 +12,37 @@ int main(int argc, char** argv){
     struct sockaddr_in servaddr;  
     char buff[4096];  
     int n;  
-    //³õÊ¼»¯Socket  
+    //åˆå§‹åŒ–Socket  
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  
         printf("create socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
-    //³õÊ¼»¯  
+    //åˆå§‹åŒ–  
     memset(&servaddr, 0, sizeof(servaddr));  
     servaddr.sin_family = AF_INET;  
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY); //IPµØÖ·ÉèÖÃ³ÉINADDR_ANY,ÈÃÏµÍ³×Ô¶¯»ñÈ¡±¾»úµÄIPµØÖ·¡£  
-    servaddr.sin_port = htons(DEFAULT_PORT);      //ÉèÖÃµÄ¶Ë¿ÚÎªDEFAULT_PORT  
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY); //IPåœ°å€è®¾ç½®æˆINADDR_ANY,è®©ç³»ç»Ÿè‡ªåŠ¨è·å–æœ¬æœºçš„IPåœ°å€ã€‚  
+    servaddr.sin_port = htons(DEFAULT_PORT);      //è®¾ç½®çš„ç«¯å£ä¸ºDEFAULT_PORT  
   
-    //½«±¾µØµØÖ·°ó¶¨µ½Ëù´´½¨µÄÌ×½Ó×ÖÉÏ  
+    //å°†æœ¬åœ°åœ°å€ç»‘å®šåˆ°æ‰€åˆ›å»ºçš„å¥—æ¥å­—ä¸Š  
     if( bind(socket_fd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1){  
         printf("bind socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
-    //¿ªÊ¼¼àÌıÊÇ·ñÓĞ¿Í»§¶ËÁ¬½Ó  
+    //å¼€å§‹ç›‘å¬æ˜¯å¦æœ‰å®¢æˆ·ç«¯è¿æ¥  
     if( listen(socket_fd, 10) == -1){  
         printf("listen socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
     printf("======waiting for client's request======\n");  
     while(1){  
-        //×èÈûÖ±µ½ÓĞ¿Í»§¶ËÁ¬½Ó£¬²»È»¶àÀË·ÑCPU×ÊÔ´¡£  
+        //é˜»å¡ç›´åˆ°æœ‰å®¢æˆ·ç«¯è¿æ¥ï¼Œä¸ç„¶å¤šæµªè´¹CPUèµ„æºã€‚  
         if( (connect_fd = accept(socket_fd, (struct sockaddr*)NULL, NULL)) == -1){  
             printf("accept socket error: %s(errno: %d)",strerror(errno),errno);  
             continue;  
         }  
-        //½ÓÊÜ¿Í»§¶Ë´«¹ıÀ´µÄÊı¾İ  
+        //æ¥å—å®¢æˆ·ç«¯ä¼ è¿‡æ¥çš„æ•°æ®  
         n = recv(connect_fd, buff, MAXLINE, 0);  
-        //Ïò¿Í»§¶Ë·¢ËÍ»ØÓ¦Êı¾İ  
+        //å‘å®¢æˆ·ç«¯å‘é€å›åº”æ•°æ®  
         if(!fork()){
             if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
                 perror("send error");  
