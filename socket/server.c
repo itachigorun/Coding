@@ -11,12 +11,14 @@ int main(int argc, char** argv){
     int socket_fd, connect_fd;  
     struct sockaddr_in servaddr;  
     char buff[4096];  
-    int n;  
+    int n; 
+    
     //初始化Socket  
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  
         printf("create socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
+    
     //初始化  
     memset(&servaddr, 0, sizeof(servaddr));  
     servaddr.sin_family = AF_INET;  
@@ -28,6 +30,7 @@ int main(int argc, char** argv){
         printf("bind socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
+
     //开始监听是否有客户端连接  
     if( listen(socket_fd, 10) == -1){  
         printf("listen socket error: %s(errno: %d)\n",strerror(errno),errno);  
