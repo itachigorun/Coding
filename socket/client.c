@@ -48,6 +48,7 @@ int main(int argc, char** argv)
        perror("recv error");  
        exit(1);  
     }  
+    
     buf[rec_len]  = '\0';  
     printf("Received : %s ",buf);  
     close(sockfd);  
