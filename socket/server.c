@@ -36,7 +36,6 @@ int main(int argc, char** argv){
         printf("listen socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
     }  
-    
     printf("======waiting for client's request======\n");  
     while(1){  
         //阻塞直到有客户端连接，不然多浪费CPU资源。  
