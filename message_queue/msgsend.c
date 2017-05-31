@@ -3,12 +3,7 @@
 #include<string.h>
 #include<sys/msg.h>
 #include<errno.h>
-
-#define MAX_TEXT 512
-typedef struct{
-    long int msg_type;
-    char text[MAX_TEXT];
-}msg_st;
+#include<head.h>
 
 int main()
 {

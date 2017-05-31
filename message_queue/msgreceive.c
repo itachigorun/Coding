@@ -4,11 +4,8 @@
 #include<string.h>
 #include<errno.h>
 #include<sys/msg.h>
+#include<head.h>
 
-typedef struct{
-    long int msg_type;
-    char text[BUFSIZE];
-}msg_st;
 
 int main()
 {
