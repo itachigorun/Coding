@@ -3,7 +3,7 @@
 #include<string.h>
 #include<sys/msg.h>
 #include<errno.h>
-#include<head.h>
+#include"head.h"
 
 int main()
 {

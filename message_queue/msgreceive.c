@@ -4,7 +4,7 @@
 #include<string.h>
 #include<errno.h>
 #include<sys/msg.h>
-#include<head.h>
+#include"head.h"
 
 
 int main()
