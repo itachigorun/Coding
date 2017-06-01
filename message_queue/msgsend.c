@@ -3,7 +3,13 @@
 #include<string.h>
 #include<sys/msg.h>
 #include<errno.h>
-#include<head.h>
+
+#define BUFSIZE 1024
+
+typedef struct{
+    long int msg_type;
+    char text[BUFSIZE];
+}msg_st;
 
 int main()
 {
