@@ -1,5 +1,5 @@
 cc = gcc
-program = msgqueue
+program = msgreceive
 deps = head.h
 objects = msgreceive.o  
 

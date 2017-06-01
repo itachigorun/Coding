@@ -1,5 +1,5 @@
 cc = gcc
-program = msgqueue
+program = msgsend
 deps = head.h
 objects = msgsend.o  
 
