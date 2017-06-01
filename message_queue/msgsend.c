@@ -3,13 +3,7 @@
 #include<string.h>
 #include<sys/msg.h>
 #include<errno.h>
-
-#define BUFSIZE 1024
-
-typedef struct{
-    long int msg_type;
-    char text[BUFSIZE];
-}msg_st;
+#include<head.h>
 
 int main()
 {
@@ -33,7 +27,7 @@ int main()
         data.msg_type = 1; //注意2
         strcpy(data.text, buffer);
         //向队列发送数据
-        if(msgsnd(msgid, (void *)&data, MAX_TEXT, 0) == -1)
+        if(msgsnd(msgid, (void *)&data, BUFSIZE, 0) == -1)
         {
             fprintf(stderr, "msgsnd failed\n");
             exit(EXIT_FAILURE);
