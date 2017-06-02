@@ -1,5 +1,5 @@
-#ifndef _HEAD_H
-#define _HEAD_H
+#ifndef _HEAD_H_H
+#define _HEAD_H_H
 
 #define BUFSIZE 1024
 
