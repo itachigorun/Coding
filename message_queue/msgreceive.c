@@ -12,7 +12,7 @@ int main()
     int running = 1;
     int msgid = -1;
     msg_st data;
-    long int msgtype = 0;
+    long int msgtype = 0; //注意1
 
     //建立消息队列
     msgid = msgget((key_t)1234, 0666|IPC_CREAT);
