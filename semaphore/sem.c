@@ -77,7 +77,8 @@ static int set_semvalue()
     union semun sem_union;
     sem_union.val = 1;
     if(semctl(sem_id, 0, SETVAL, sem_union) == -1)
-        fprintf(stderr, "Failed to delete semaphore\n");
+        return 0;
+    return 1;
 }
 
 static void del_semvalue()
