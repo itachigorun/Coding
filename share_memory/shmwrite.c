@@ -27,7 +27,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "shmat failed\n");
         exit(EXIT_FAILURE);
     }
-    printf("Memory attched at %X\n", (int)shm);
+    printf("Memory attched at %X\n", (int *)shm);
 
     //设置共享内存
     shared = (shared_use_st *)shm;

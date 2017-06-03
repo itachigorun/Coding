@@ -28,7 +28,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    printf("\nMemory attached at %X\n", (int)shm);
+    printf("\nMemory attached at %X\n", (int *)shm);
 
     //设置共享内存
     shared = (shared_use_st *)shm; //注意：shm有点类似通过malloc()获得到的内存，所以这里需要做个强制类型转换
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     if(shmdt(shm) == -1)
     {
         fprintf(stderr, "shmdt failed\n");
-        exit(EXIT_FAILUR);
+        exit(EXIT_FAILURE);
     }    
 
     //删除共享内存
