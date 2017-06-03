@@ -13,6 +13,8 @@ union semun{
     unsigned short *arry;
 };
 
+static int sem_id = 0;
+
 static int set_semvalue();
 static void del_semvalue();
 static int semaphore_p();
