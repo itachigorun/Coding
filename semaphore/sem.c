@@ -80,6 +80,15 @@ static int set_semvalue()
         fprintf(stderr, "Failed to delete semaphore\n");
 }
 
+static void del_semvalue()
+{
+    //删除信号量
+    union semun sem_union;
+
+    if(semctl(sem_id, 0, IPC_RMID, sem_union) == -1 )
+        fprintf(stderr, "Failed to delete semaphore\n");
+}
+
 static int semaphore_p()
 {
     //对信号量做减1操作，即等待p(sv)
