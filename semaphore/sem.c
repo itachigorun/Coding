@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     int i = 0;
 
     //创建信号量
-    sem_id = semget((key_t)1234, 0666|IPC_CREAT);
+    sem_id = semget((key_t)1234, 1, 0666|IPC_CREAT);
 
     if(argc > 1)
     {
