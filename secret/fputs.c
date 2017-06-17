@@ -12,7 +12,7 @@ int main()
         exit(1);
     }
 
-    printf("Input a string:");
+    printf("Input a string:\n");
     fgets(strTemp, sizeof(strTemp), stdin);
     strcat(str, "\n");
     strcat(str, strTemp);
