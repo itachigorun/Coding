@@ -18,7 +18,7 @@ int main()
     stu *pb = boyb;
     if( (fp=fopen("text.txt", "wb+")) == NULL ){
         printf("Cannot open file, press any key to exit!\n");
-        getchr();
+        getchar();
         exit(1);
     }
     //从键盘输入数据
