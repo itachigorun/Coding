@@ -9,14 +9,15 @@ typedef struct{
     float score;
 }stu;
 
-int main(){
+int main()
+{
     FILE *fp;
     int i;
     stu boya[N], boyb[N];
     stu *pa = boya;
     stu *pb = boyb;
-    if( (fp=fopen("text.txt","wt+")) == NULL ){
-        printf("Cannot open file, press any key exit!");
+    if( (fp=fopen("text.txt", "wt+")) == NULL ){
+        printf("Cannot open file, press any key to exit!\n");
         getchar();
         exit(1);
     }
@@ -25,7 +26,7 @@ int main(){
     for(i=0; i<N; i++,pa++){
         scanf("%s %d %d %f", pa->name, &pa->num, &pa->age, &pa->score);   
     }
-   
+    pa = boya;
     //将boya中的数据写入到文件
     for(i=0; i<N; i++,pa++){
         fprintf(fp,"%s %d %d %f\n", pa->name, pa->num, pa->age, pa->score);   
@@ -36,7 +37,7 @@ int main(){
     for(i=0; i<N; i++,pb++){
         fscanf(fp, "%s %d %d %f\n", pb->name, &pb->num, &pb->age, &pb->score);
     }
-    
+    pb = boyb;
     //将boyb中的数据输出到显示器
     for(i=0; i<N; i++,pb++){
         printf("%s  %d  %d  %f\n", pb->name, pb->num, pb->age, pb->score);

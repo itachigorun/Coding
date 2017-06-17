@@ -21,11 +21,12 @@ int main()
         getchar();
         exit(1);
     }
-    //从键盘输入数据
+    //从键盘读入数据，保存到boya
     printf("Input data:\n");
     for(i=0; i<N; i++,pa++){
-        scanf("%s %d %d %f",pa->name, &pa->num,&pa->age, &pa->score);
+        scanf("%s %d %d %f", pa->name, &pa->num,&pa->age, &pa->score);
     }
+
     //将数组 boya 的数据写入文件
     fwrite(boya, sizeof(stu), N, fp);
     //将文件指针重置到文件开头
