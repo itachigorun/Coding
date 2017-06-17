@@ -8,7 +8,7 @@ int main()
     int i, size = sizeof(int);
     FILE *fp;
 
-    if((fp = fopen("text.txt", "r+")) == NULL){
+    if((fp = fopen("text.txt", "rb+")) == NULL){
         printf("Cannot open file, press any key to exit!\n");
         getchar();
         exit(1);
