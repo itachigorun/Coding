@@ -1,6 +1,6 @@
 #include<stdio.h>
 #define N 5
-int main
+int main()
 {
     //从键盘输入的数据放入a，从文件读取的数据放入b
     int a[N], b[N];
