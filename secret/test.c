@@ -18,9 +18,9 @@ int main()
     putchar('\n'); //输出换行符
 
     if(ferror(fp)){
-        puts("读取失败");
+        puts("read success");
     }else{
-        puts("读取成功");
+        puts("read failed");
     }
 
     fclose(fp);
