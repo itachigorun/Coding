@@ -57,3 +57,19 @@ void toUpper(const char *strIn, int len, char *strOut)
 
    return;
 }
+
+/*
+ *     检查字符串是否为空( 只包含字符space, '\t', etc )
+ */
+int isBlank( const char *str)
+{
+
+   while( isspace(*str) ) 
+      str++;
+
+   /* 到字符串尾 */
+   if( *str == 0 )
+      return TRUE;
+   else
+     return FALSE;
+}
