@@ -12,8 +12,8 @@ int main(int argc, char **argv)
     shared_use_st *shared;  //指向shm
     int shmid;              //共享内存标识符
 
-    //创建共享内存
-    shmid = shmget((key_t)1234, sizeof(shared_use_st), 0666|IPC_CREAT);
+    //创建共享内存,如果要想在key标识的共享内存不存在时创建它，必须与IPC_CREAT做或操作,否则有该共享内存返回对应值，或者失败
+    shmid = shmget((key_t)1234, sizeof(shared_use_st), 0666|IPC_CREAT); 
     if(shmid == -1)
     {
         fprintf(stderr, "shmat failed\n");
