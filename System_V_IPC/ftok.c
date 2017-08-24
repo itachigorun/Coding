@@ -4,17 +4,17 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-int main(int argc, int **argv)
+int main(int argc, char **argv)
 {
-    struct stat stat;
+    struct stat f_stat;
     if(argc != 2)
     {
         printf("Please input pathname\n");
         exit(0);
     }
 
-    stat(argv[1], &stat);
-    printf("st_dev: %lx, st_ino: %lx, key: %x\n", (long)stat.st_dev, (long)stat.st_ino, ftok(argv[1], 0x57));
+    stat(argv[1], &f_stat);
+    printf("st_dev: %lx, st_ino: %lx, key: %x\n", f_stat.st_dev, f_stat.st_ino, ftok(argv[1], 0x57));
 
     return 0;
 }
