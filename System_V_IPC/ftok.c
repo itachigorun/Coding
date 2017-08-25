@@ -49,3 +49,10 @@ pathname所在文件系统的信息（stat结构的st_dev成员）
 pathname在本文件系统内的索引节点号（stat结构的st_ino成员）
 id的低序8位（不能为0）
 */
+
+
+/*
+IPC_PRIVATE 建立IPC,key可以为此值
+IPC_CREAT  如果没有建立，有不处理
+IPC_CREAT|IPC_EXCL  没有则创立，如果有则返回错误
+*/
