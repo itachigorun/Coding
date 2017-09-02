@@ -4,6 +4,7 @@
 #include<string.h>
 
 #define STRING "Hello world!"
+#define BUFSIZE 100
 
 int main()
 {
