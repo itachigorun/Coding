@@ -16,5 +16,12 @@ int main()
         exit(1);
     }
 
-    if(write)
+    if(write(pipefd[1], buf, BUFSIZE) <0)
+    {
+        printf("Write error\n");
+        exit(1);
+    }
+    printf("%s\n", buf);
+
+    return 0;
 }
