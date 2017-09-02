@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 */
-    if(mknod(argv[1], 0600|S_IFIFO, 0) < 0)
+    if(mknod(argv[1], 0600|S_IFIFO, 0) < 0)  //argv[1]保存创建命名管道的地址
     {
         printf("mknod()");
         exit(1);
