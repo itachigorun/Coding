@@ -9,7 +9,7 @@
 int main()
 {
     int pipefd[2];
-    char buf[BUFSIZE];
+    char buf[BUFSIZE]={0};
 
     if(pipe(pipefd) == -1)
     {
