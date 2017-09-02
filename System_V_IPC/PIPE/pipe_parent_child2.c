@@ -6,7 +6,7 @@
 #include<sys/wait.h>
 
 #define STRING "Hello world!"
-#deinf BUFSIZE 100
+#define BUFSIZE 100
 
 int main()
 {
