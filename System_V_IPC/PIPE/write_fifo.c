@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     }  
       
     printf("before open\n");  
-    fd = open("my_fifo", O_RDONLY);//等着只写  
+    fd = open("my_fifo", O_RDONLY);//等着只读  
     if(fd < 0)  
     {  
         perror("open fifo");  

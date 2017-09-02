@@ -10,17 +10,16 @@ int main(int argc, char *argv[])
         printf(stderr, "Argument error\n");
         exit(1);
     }
-/*
-    if(mkfifo(argv[1], 0600) < 0)
+
+    if(mkfifo(argv[1], 0600) < 0)    //argv[1]保存创建命名管道的地址
     {
         printf("mkfifo error\n");
         exit(1);
     }
-*/
-    if(mknod(argv[1], 0600|S_IFIFO, 0) < 0)  //argv[1]保存创建命名管道的地址
-    {
-        printf("mknod()");
-        exit(1);
-    }
+
     return 0;
 }
+
+/*
+unlink(FIFO)删除创建的命名管道文件
+*/
