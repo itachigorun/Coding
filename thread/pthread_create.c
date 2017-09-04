@@ -16,12 +16,12 @@ int main()
     
     if(!pthread_create(&id,NULL,(void *)thread,NULL))
     {
-	printf("succeed!\n");
-	return 0;
+	    printf("succeed!\n");
+	    return 0;
     }
     else
     {
         printf("Fail to Create Thread");
-	return -1;
+	    return -1;
     }
 }
