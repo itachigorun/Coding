@@ -48,6 +48,7 @@ int main(int argc, char** argv){
         n = recv(connect_fd, buff, MAXLINE, 0);  
         //向客户端发送回应数据  
         if(!fork()){
+            close(socket_fd); //关闭监听socket
             if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
                 perror("send error");  
             close(connect_fd);  
