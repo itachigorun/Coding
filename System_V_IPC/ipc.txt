@@ -1,0 +1,100 @@
+进程间通信概述
+
+进程间通信有如下的目的：1、数据传输，一个进程需要将它的数据发送给另一个进程，发送的数据量在一个字节到几M之间；2、共享数据，多个进程想要操作共享数据，一个进程对数据的修改，其他进程应该立刻看到；3、通知事件，一个进程需要向另一个或一组进程发送消息，通知它们发生了某件事情；4、资源共享，多个进程之间共享同样的资源。为了做到这一点，需要内核提供锁和同步机制；5、进程控制，有些进程希望完全控制另一个进程的执行（如Debug进程），此时控制进程希望能够拦截另一个进程的所有陷入和异常，并能够及时知道它的状态改变。
+
+Linux进程间通信由以下几部分发展而来：
+
+早期UNIX进程间通信：包括管道、FIFO、信号。
+
+基于System V的进程间通信：包括System V消息队列、System V信号灯（Semaphore）、System V共享内存。
+
+基于Socket进程间通信。
+
+基于POSIX进程间通信：包括POSIX消息队列、POSIX信号灯、POSIX共享内存。
+
+Linux中，与IPC相关的命令包括：ipcs、ipcrm（释放IPC）、
+
+IPCS命令是Linux下显示进程间通信设施状态的工具。我们知道，系统进行进程间通信（IPC）的时候，可用的方式包括信号量、共享内存、消息队列、管道、信号（signal）、套接字等形式[2]。使用IPCS可以查看共享内存、信号量、消息队列的状态。
+
+例如在CentOS6.0上执行ipcs
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+0x6500053b 32769      root       666        11272      14                      
+0x6e00054c 98307      root       644        109448     6                       
+0xbc82ae74 196614     tsminst1   667        34156016   11                      
+0x010500d8 896172088  fep        600        210408     1                       
+0x020500d8 352092218  fep        600        7930204    26                      
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+0x73000562 131074     root       666        64        
+0x00000000 163843     root       666        1         
+0x73000566 196612     root       666        16        
+0xbc82ae74 229381     tsminst1   667        1   
+
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+0xbc82ae77 1310728    tsminst1   665        0            0           
+0x010500d5 108593191  fep        600        0            0           
+0x960500d5 108625960  fep        600        0            0           
+0x970500d5 108658729  fep        600        0            0           
+0x200500d5 108691498  fep        600        0            0           
+0x6e0500d5 108724267  fep        600        0            0   
+
+其中：
+第一列就是共享内存的key；
+第二列是共享内存的编号shmid；
+第三列就是创建的用户owner；
+第四列就是权限perms；
+第五列为创建的大小bytes；
+第六列为连接到共享内存的进程数nattach；
+第七列是共享内存的状态status。其中显示“dest”表示共享内存段已经被删除，但是还有用户在使用它，当该段内存的mode字段设置为 SHM_DEST时就会显示“dest”。当用户调用shmctl的IPC_RMID时，内存先查看多少个进程与这个内存关联着，如果关联数为0，就会销 毁这段共享内存，否者设置这段内存的mod的mode位为SHM_DEST，如果所有进程都不用则删除这段共享内存。
+
+具体的用法总结如下：
+1、显示所有的IPC设施
+# ipcs -a
+
+2、显示所有的消息队列Message Queue
+# ipcs -q
+
+3、显示所有的信号量
+# ipcs -s
+
+4、显示所有的共享内存
+# ipcs -m
+
+5、显示IPC设施的详细信息
+# ipcs -q -i id
+
+id 对应shmid、semid、msgid等。-q对应设施的类型（队列），查看信号量详细情况使用-s，查看共享内存使用-m。
+6、显示IPC设施的限制大小
+# ipcs -m -l
+
+-m对应设施类型，可选参数包括-q、-m、-s。
+
+7、显示IPC设施的权限关系
+# ipcs -c
+# ipcs -m -c
+# ipcs -q -c
+# ipcs -s -c
+
+8、显示最近访问过IPC设施的进程ID。
+# ipcs -p
+# ipcs -m -p
+# ipcs -q -p
+
+9、显示IPC设施的最后操作时间
+# ipcs -t
+# ipcs -q -t
+# ipcs -m -t
+# ipcs -s -t
+
+10、显示IPC设施的当前状态
+# ipcs -u
+
+Linux上的ipcs命令，不支持UNIX上的-b、-o指令，同样UNIX中不支持-l、-u指令，所以在编写跨平台的脚本时，需要注意这个问题。
+
+下面的命令可以释放所有已分配的共享内存：
+
+ipcs -m | awk '$2 ~ /[0-9]+/ {print $2}' | while read s; do sudo ipcrm -m $s; done
