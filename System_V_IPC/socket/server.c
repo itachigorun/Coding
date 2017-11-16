@@ -12,7 +12,7 @@
 #define MAXLINE 4096  
 int main(int argc, char** argv){  
     int socket_fd, connect_fd;  
-    struct sockaddr_in servaddr, cliaddr, getaddr;  
+    struct sockaddr_in servaddr, getaddr;  
     char buff[4096];  
     int n;
 
@@ -43,22 +43,22 @@ int main(int argc, char** argv){
     printf("======waiting for client's request======\n");  
     while(1){  
         //阻塞直到有客户端连接，不然多浪费CPU资源。  
-        if( (connect_fd = accept(socket_fd, (struct sockaddr*)cliaddr, sizeof(cliaddr))) == -1){  //如果不关心客户端的地址后两个参数填null
+        if( (connect_fd = accept(socket_fd, (struct sockaddr*)&getaddr, sizeof(getaddr))) == -1){  //如果不关心客户端的地址后两个参数填null
             printf("accept socket error: %s(errno: %d)",strerror(errno),errno);  
             continue;  
         }  
         if(getsockname(socket_fd, (struct sockaddr *)getaddr, sizeof(getaddr)))
            printf("getsockname err\n");
-        printf("%s,%s\n",&getaddr.sin_addr,&getaddr.sin_port);
-        inet_ntop(AF_INET, &getaddr.sin_addr, buff);
+        printf("%s,%s\n",getaddr.sin_addr,getaddr.sin_port);
+        inet_ntop(AF_INET, getaddr.sin_addr, buff);
         memset(buff,0,4096);
         printf("%s\n",buff);
         
         if(getpeername(socket_fd, (struct sockaddr *)getaddr, sizeof(getaddr)))
            printf("getsockname err\n");
-        printf("%s,%s\n",&getaddr.sin_addr,&getaddr.sin_port);
+        printf("%s,%s\n",getaddr.sin_addr,getaddr.sin_port);
         memset(buff,0,4096);
-        inet_pton(AF_INET, &getaddr.sin_addr, buff);
+        inet_pton(AF_INET, getaddr.sin_addr, buff);
         printf("%s\n",buff);
 
         //接受客户端传过来的数据  
