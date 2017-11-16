@@ -44,23 +44,26 @@ int main(int argc, char** argv){
     printf("======waiting for client's request======\n");  
     while(1){  
         //阻塞直到有客户端连接，不然多浪费CPU资源。  
-        if( (connect_fd = accept(socket_fd, (struct sockaddr*)&getaddr, sizeof(getaddr))) == -1){  //如果不关心客户端的地址后两个参数填null
+        connect_fd = accept(socket_fd, (struct sockaddr*)&getaddr, (socklen_t *)sizeof(getaddr));
+	if(connect_fd == -1)
+	{  //如果不关心客户端的地址后两个参数填null
             printf("accept socket error: %s(errno: %d)",strerror(errno),errno);  
             continue;  
         }  
+        if(inet_ntop(AF_INET, &getaddr.sin_addr, buff, sizeof(buff))!=NULL)
+            printf("%s\n",buff);
+	else
+	    printf("error\n");
         memset(buff,0,4096);
-        printf("%s,%s\n",&getaddr.sin_addr,&getaddr.sin_port);
         len = sizeof(getaddr);
-        if(getsockname(socket_fd, (struct sockaddr *)&getaddr, &len)))
+        if(getsockname(socket_fd, (struct sockaddr *)&getaddr, &len)!=0)
            printf("getsockname err\n");
-        printf("%s,%s\n",&getaddr.sin_addr, &getaddr.sin_port);
         inet_ntop(AF_INET, &getaddr.sin_addr, buff, sizeof(buff));
         printf("%s\n",buff);
         memset(buff,0,4096);
 
-        if(getpeername(socket_fd, (struct sockaddr *)&getaddr, &len))
+        if(getpeername(socket_fd, (struct sockaddr *)&getaddr, &len)!=0)
            printf("getsockname err\n");
-        printf("%s,%s\n",&getaddr.sin_addr, &getaddr.sin_port);
         inet_pton(AF_INET, buff, &getaddr.sin_addr);
         printf("%s\n",buff);
 
