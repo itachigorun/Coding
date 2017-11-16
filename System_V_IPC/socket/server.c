@@ -15,6 +15,7 @@ int main(int argc, char** argv){
     struct sockaddr_in servaddr, getaddr;  
     char buff[4096];  
     int n;
+    int len;
 
     //初始化Socket  
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  
@@ -47,18 +48,20 @@ int main(int argc, char** argv){
             printf("accept socket error: %s(errno: %d)",strerror(errno),errno);  
             continue;  
         }  
-        if(getsockname(socket_fd, (struct sockaddr *)getaddr, sizeof(getaddr)))
-           printf("getsockname err\n");
-        printf("%s,%s\n",getaddr.sin_addr,getaddr.sin_port);
-        inet_ntop(AF_INET, getaddr.sin_addr, buff);
         memset(buff,0,4096);
+        printf("%s,%s\n",&getaddr.sin_addr,&getaddr.sin_port);
+        len = sizeof(getaddr);
+        if(getsockname(socket_fd, (struct sockaddr *)&getaddr, &len)))
+           printf("getsockname err\n");
+        printf("%s,%s\n",&getaddr.sin_addr, &getaddr.sin_port);
+        inet_ntop(AF_INET, &getaddr.sin_addr, buff, sizeof(buff));
         printf("%s\n",buff);
-        
-        if(getpeername(socket_fd, (struct sockaddr *)getaddr, sizeof(getaddr)))
-           printf("getsockname err\n");
-        printf("%s,%s\n",getaddr.sin_addr,getaddr.sin_port);
         memset(buff,0,4096);
-        inet_pton(AF_INET, getaddr.sin_addr, buff);
+
+        if(getpeername(socket_fd, (struct sockaddr *)&getaddr, &len))
+           printf("getsockname err\n");
+        printf("%s,%s\n",&getaddr.sin_addr, &getaddr.sin_port);
+        inet_pton(AF_INET, buff, &getaddr.sin_addr);
         printf("%s\n",buff);
 
         //接受客户端传过来的数据  
