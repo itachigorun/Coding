@@ -171,6 +171,10 @@ int main(int argc, char** argv)
 
             if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
                 perror("send error");  
+            /*    
+            if(write(connect_fd, "Hello,you are connected!\n", 26) == -1)  
+                perror("send error");  
+            */    
             close(connect_fd);  
             exit(0);  
             }  

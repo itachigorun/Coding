@@ -46,11 +46,17 @@ int main(int argc, char** argv)
         printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);  
         exit(0);  
     }  
+    
     if((rec_len = recv(sockfd, buf, MAXLINE,0)) == -1) {  
        perror("recv error");  
        exit(1);  
+    } 
+    /* 
+    if((rec_len = read(sockfd, buf, MAXLINE)) == -1) {  
+       perror("recv error");  
+       exit(1);  
     }  
-    
+    */
     buf[rec_len]  = '\0';  
     printf("Received : %s ",buf);  
     close(sockfd);  
