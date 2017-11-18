@@ -52,8 +52,8 @@ int main(int argc, char** argv)
     //初始化  
     memset(&servaddr, 0, sizeof(servaddr));  
     servaddr.sin_family = AF_INET;  
-    //servaddr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址。  
-    servaddr.sin_addr.s_addr = inet_addr("172.16.1.17");
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址。  
+    //servaddr.sin_addr.s_addr = inet_addr("192.16.1.1");
     servaddr.sin_port = htons(DEFAULT_PORT);      //设置的端口为DEFAULT_PORT  
 
     //将本地地址绑定到所创建的套接字上  
@@ -78,8 +78,8 @@ int main(int argc, char** argv)
     /* 输出5 */
     memset(buff,0,MAXLINE);
     strcpy(buff,inet_ntoa(getseraddr.sin_addr));
-    printf("%s\n",buff);
-    
+    printf("%s:",buff);
+    printf("%d\n",ntohs(getseraddr.sin_port));
     /*输出6*/
     memset(buff,0,MAXLINE);
     if(inet_ntop(AF_INET, &getseraddr.sin_addr, buff, MAXLINE)==NULL)
@@ -89,7 +89,10 @@ int main(int argc, char** argv)
         return FAILURE;
     }
     else
-        printf("%s\n",buff);
+    {
+        printf("%s:",buff);
+        printf("%d\n",ntohs(getseraddr.sin_port));
+    }
 
     printf("======waiting for client's request======\n");  
     while(1){  
@@ -111,7 +114,8 @@ int main(int argc, char** argv)
             /* 输出1 */
             memset(buff,0,MAXLINE);
             strcpy(buff,inet_ntoa(clientaddr.sin_addr));
-            printf("%s\n",buff);
+            printf("%s:",buff);
+            printf("%d\n",ntohs(getseraddr.sin_port));
             
             /*输出2*/
             memset(buff,0,MAXLINE);
@@ -122,7 +126,10 @@ int main(int argc, char** argv)
                 return FAILURE;
             }
             else
-                printf("%s\n",buff);
+            {
+	        printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+	    }
             /* 获得本地地址 */
             if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
             {
@@ -133,8 +140,8 @@ int main(int argc, char** argv)
             /* 输出3 */
             memset(buff,0,MAXLINE);
             strcpy(buff,inet_ntoa(getcliaddr.sin_addr));
-            printf("%s\n",buff);
-            
+            printf("%s:",buff);
+            printf("%d\n",ntohs(getseraddr.sin_port));
             /*输出4*/
             memset(buff,0,MAXLINE);
             if(inet_ntop(AF_INET, &getcliaddr.sin_addr, buff, MAXLINE)==NULL)
@@ -144,7 +151,10 @@ int main(int argc, char** argv)
                 return FAILURE;
             }
             else
-                printf("%s\n",buff);
+            {
+	        printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+            }
 
             /* 获得客户端地址 */
             if(getpeername(connect_fd, (struct sockaddr *)&getseraddr, (socklen_t *)&len)!=0)
@@ -156,7 +166,8 @@ int main(int argc, char** argv)
             /* 输出5 */
             memset(buff,0,MAXLINE);
             strcpy(buff,inet_ntoa(getseraddr.sin_addr));
-            printf("%s\n",buff);
+            printf("%s:",buff);
+            printf("%d\n",ntohs(getseraddr.sin_port));
             
             /*输出6*/
             memset(buff,0,MAXLINE);
@@ -167,7 +178,10 @@ int main(int argc, char** argv)
                 return FAILURE;
             }
             else
-                printf("%s\n",buff);
+            {
+	        printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+	    }
 
             if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
                 perror("send error");  
