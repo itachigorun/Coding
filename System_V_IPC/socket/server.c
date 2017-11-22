@@ -7,10 +7,60 @@
 #include<sys/socket.h>  
 #include<netinet/in.h>  
 #include<arpa/inet.h>
+#include<signal.h>
 
 #define DEFAULT_PORT 8000  
 #define MAXLINE 4096  
 #define FAILURE -1
+sigset_t sigSet
+
+void sigChildHandler(int signo)
+{
+    /*设置信号阻塞*/
+    if(sigprocmask(SIG_BLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_BLOCK failed\n");
+        exit(1);
+    }
+    /*解开信号阻塞*/
+    if(sigprocmask(SIG_UNBLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_UNBLOCK failed\n");
+        exit(1);
+    }
+}
+
+void sigTermHandler(int signo)
+{
+    /*设置信号阻塞*/
+    if(sigprocmask(SIG_BLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_BLOCK failed\n");
+        exit(1);
+    }
+    /*解开信号阻塞*/
+    if(sigprocmask(SIG_UNBLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_UNBLOCK failed\n");
+        exit(1);
+    }
+}
+
+void sigAlarmHandler(int signo)
+{
+    /*设置信号阻塞*/
+    if(sigprocmask(SIG_BLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_BLOCK failed\n");
+        exit(1);
+    }
+    /*解开信号阻塞*/
+    if(sigprocmask(SIG_UNBLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_UNBLOCK failed\n");
+        exit(1);
+    }
+}
 int main(int argc, char** argv)
 {  
     int socket_fd, connect_fd;  
@@ -20,6 +70,68 @@ int main(int argc, char** argv)
     int len = sizeof(struct sockaddr_in);
     int flag = 1;
     struct linger lingopt;
+    struct sigaction act;
+
+    /* 清空信号 */
+    if(sigemptyset(&sigSet) == FAILURE)
+    {
+        printf("sigemptyset failed\n");
+        exit(1);
+    }
+    /* 添加子进程退出信号 */
+    if(sigaddset(&sigSet, SIGCHLD) == FAILURE)
+    {
+        printf("sigaddset SIGCHLD failed\n");
+        exit(1);
+    }
+    /* 添加退出信号,kill命令默认信号 */
+    if(sigaddset(&sigSet, SIGTERM) == FAILURE)
+    {
+        printf("sigaddset SIGTERM failed\n");
+        exit(1);
+    }
+    /* 添加时钟信号 */
+    if(sigaddset(&sigSet, SIGALRM) == FAILURE)
+    {
+        printf("sigaddset SIGALRM failed\n");
+        exit(1);
+    }
+    /* 阻塞信号处理 */
+    if(sigprocmask(SIG_BLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask failed\n");
+        exit(1);
+    }
+    printf("signal set success\n");
+    /* 设置子进程信号处理函数 */
+    act.sa_handler = sigChildHandler;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_RESTART;
+    if(sigaction(SIGCHLD, &act, NULL) == FAILURE)
+    {
+        printf("sigaction SIGCHLD failed\n");
+        exit(1);
+    }
+    /* 设置退出信号处理函数 */
+    ac.sa_handler = sigTermHandler;
+    if(sigaction(SIGTERM, &act, NULL) == FAILURE)
+    {
+        printf("sigaction SIGTERM failed\n");
+        exit(1);
+    }
+    /* 设置时钟信号处理函数 */
+    act.sa_handler = sigAlarmHandler;
+    if(sigaction(SIGALRM, &act, NULL) == FAILURE)
+    {
+        printf("sigaction SIGALRM failed\n");
+        exit(1);
+    }
+     /*解开信号阻塞*/
+    if(sigprocmask(SIG_UNBLOCK, &sigSet, NULL) == FAILURE)
+    {
+        printf("sigprocmask SIG_UNBLOCK failed\n");
+        exit(1);
+    }
 
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  
         printf("create socket error: %s(errno: %d)\n",strerror(errno),errno);  
@@ -104,12 +216,14 @@ int main(int argc, char** argv)
             return FAILURE;  
         }
 
-        memset(buff,0,MAXLINE);
-        //接受客户端传过来的数据  
-        receivelen = recv(connect_fd, buff, MAXLINE, 0);  
         //向客户端发送回应数据  
-        if(!fork()){
+        if(fork() == 0){
             close(socket_fd); //关闭监听socket
+            memset(buff,0,MAXLINE);
+            //接受客户端传过来的数据  
+            receivelen = recv(connect_fd, buff, MAXLINE, 0);  
+            buff[receivelen] = '\0';  
+            printf("recv msg from client: %s\n", buff);  
 
             /* 输出1 */
             memset(buff,0,MAXLINE);
@@ -127,9 +241,9 @@ int main(int argc, char** argv)
             }
             else
             {
-	        printf("%s:",buff);
+	            printf("%s:",buff);
                 printf("%d\n",ntohs(getseraddr.sin_port));
-	    }
+	        }
             /* 获得本地地址 */
             if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
             {
@@ -179,9 +293,9 @@ int main(int argc, char** argv)
             }
             else
             {
-	        printf("%s:",buff);
+	            printf("%s:",buff);
                 printf("%d\n",ntohs(getseraddr.sin_port));
-	    }
+	        }
 
             if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
                 perror("send error");  
@@ -192,8 +306,7 @@ int main(int argc, char** argv)
             close(connect_fd);  
             exit(0);  
             }  
-        buff[receivelen] = '\0';  
-        printf("recv msg from client: %s\n", buff);  
+       
         close(connect_fd);  
     }
     close(socket_fd);  
