@@ -12,7 +12,7 @@
 #define DEFAULT_PORT 8000  
 #define MAXLINE 4096  
 #define FAILURE -1
-sigset_t sigSet
+sigset_t sigSet;
 
 void sigChildHandler(int signo)
 {
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         exit(1);
     }
     /* 设置退出信号处理函数 */
-    ac.sa_handler = sigTermHandler;
+    act.sa_handler = sigTermHandler;
     if(sigaction(SIGTERM, &act, NULL) == FAILURE)
     {
         printf("sigaction SIGTERM failed\n");
