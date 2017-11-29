@@ -222,146 +222,149 @@ int main(int argc, char** argv)
         if(fork() == 0){
             close(socket_fd); //关闭监听socket
 
-    int iBytesRcved = 0 ;
-    int iRet;
-    int iTimeOut = 30;
-    time_t start = 0;
-    int maxSize = 100;
-    if( iTimeOut > 0 )
-        start = time(NULL);
+#if 0
+/* select I/O多路复用 */
+        int iBytesRcved = 0 ;
+        int iRet;
+        int iTimeOut = 30;
+        time_t start = 0;
+        int maxSize = 100;
+        if( iTimeOut > 0 )
+            start = time(NULL);
 
-    do
-    {
-      if( iTimeOut > 0 )
-      {
-         fd_set events;
-         struct timeval tm;
-         FD_ZERO(&events);
-         FD_SET(connect_fd, &events);
-         tm.tv_sec = iTimeOut;
-         tm.tv_usec = 0;
-         iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
-         if (iRet < 0)
-         {
-             printf("Socket select is failed: errno=[%d-%s]\n", errno,strerror(errno));
-             return FAILURE;
-         }
-         /* 超时 */
-         if (iRet == 0)
-         {
-            printf("Socket read timeout\n");
-            return -2;
-         }
-         time_t now = time(NULL);
-         iTimeOut = start + iTimeOut >= now ? iTimeOut + start - now : 0;
-        }
-        receivelen = read(connect_fd, (char*)buff + iBytesRcved, maxSize - iBytesRcved);
-
-        if (receivelen == -1)
+        do
         {
-            printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
-            return FAILURE;
-        }
-
-        if( receivelen == 0)
+        if( iTimeOut > 0 )
         {
-           printf("read() peer disconnect, errno=[%d-%s]\n", errno, strerror(errno));
-           /* receivelen为0是由于网络断开需重新建立socket链接*/
-           return 1;
-        }
-        iBytesRcved += receivelen;
-   }while( iBytesRcved < maxSize );
+            fd_set events;
+            struct timeval tm;
+            FD_ZERO(&events);
+            FD_SET(connect_fd, &events);
+            tm.tv_sec = iTimeOut;
+            tm.tv_usec = 0;
+            iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
+            if (iRet < 0)
+            {
+                printf("Socket select is failed: errno=[%d-%s]\n", errno,strerror(errno));
+                return FAILURE;
+            }
+            /* 超时 */
+            if (iRet == 0)
+            {
+                printf("Socket read timeout\n");
+                return -2;
+            }
+            time_t now = time(NULL);
+            iTimeOut = start + iTimeOut >= now ? iTimeOut + start - now : 0;
+            }
+            /* read函数会一直读完100个字节 */
+            receivelen = read(connect_fd, (char*)buff + iBytesRcved, maxSize - iBytesRcved);
+
+            if (receivelen == -1)
+            {
+                printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
+                return FAILURE;
+            }
+
+            if( receivelen == 0)
+            {
+            printf("read() peer disconnect, errno=[%d-%s]\n", errno, strerror(errno));
+            /* receivelen为0是由于网络断开需重新建立socket链接*/
+            return 1;
+            }
+            iBytesRcved += receivelen;
+        }while( iBytesRcved < maxSize );
         buff[maxSize] = '\0';  
         printf("recv msg from client: %s\n", buff);  
-   
+#endif
 
-            memset(buff,0,MAXLINE);
-            //接受客户端传过来的数据  
-            receivelen = recv(connect_fd, buff, MAXLINE, 0);  
-            buff[receivelen] = '\0';  
-            printf("recv msg from client: %s\n", buff);  
+        memset(buff,0,MAXLINE);
+        //接受客户端传过来的数据  
+        receivelen = recv(connect_fd, buff, MAXLINE, 0);  
+        buff[receivelen] = '\0';  
+        printf("recv msg from client: %s\n", buff);  
 
-            /* 输出1 */
-            memset(buff,0,MAXLINE);
-            strcpy(buff,inet_ntoa(clientaddr.sin_addr));
+        /* 输出1 */
+        memset(buff,0,MAXLINE);
+        strcpy(buff,inet_ntoa(clientaddr.sin_addr));
+        printf("%s:",buff);
+        printf("%d\n",ntohs(getseraddr.sin_port));
+        
+        /*输出2*/
+        memset(buff,0,MAXLINE);
+        if(inet_ntop(AF_INET, &clientaddr.sin_addr, buff, MAXLINE)==NULL)
+        {
+            printf("error\n");
+            close(connect_fd);
+            return FAILURE;
+        }
+        else
+        {
             printf("%s:",buff);
             printf("%d\n",ntohs(getseraddr.sin_port));
-            
-            /*输出2*/
-            memset(buff,0,MAXLINE);
-            if(inet_ntop(AF_INET, &clientaddr.sin_addr, buff, MAXLINE)==NULL)
-            {
-                printf("error\n");
-                close(connect_fd);
-                return FAILURE;
-            }
-            else
-            {
-	            printf("%s:",buff);
-                printf("%d\n",ntohs(getseraddr.sin_port));
-	        }
-            /* 获得本地地址 */
-            if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
-            {
-                printf("getsockname err\n");
-                close(connect_fd);
-                return FAILURE;
-            }
-            /* 输出3 */
-            memset(buff,0,MAXLINE);
-            strcpy(buff,inet_ntoa(getcliaddr.sin_addr));
+        }
+        /* 获得本地地址 */
+        if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
+        {
+            printf("getsockname err\n");
+            close(connect_fd);
+            return FAILURE;
+        }
+        /* 输出3 */
+        memset(buff,0,MAXLINE);
+        strcpy(buff,inet_ntoa(getcliaddr.sin_addr));
+        printf("%s:",buff);
+        printf("%d\n",ntohs(getseraddr.sin_port));
+        /*输出4*/
+        memset(buff,0,MAXLINE);
+        if(inet_ntop(AF_INET, &getcliaddr.sin_addr, buff, MAXLINE)==NULL)
+        {
+            printf("error\n");
+            close(connect_fd);
+            return FAILURE;
+        }
+        else
+        {
+        printf("%s:",buff);
+            printf("%d\n",ntohs(getseraddr.sin_port));
+        }
+
+        /* 获得客户端地址 */
+        if(getpeername(connect_fd, (struct sockaddr *)&getseraddr, (socklen_t *)&len)!=0)
+        {
+            printf("getsockname err\n");
+            close(connect_fd);
+            return FAILURE;
+        }
+        /* 输出5 */
+        memset(buff,0,MAXLINE);
+        strcpy(buff,inet_ntoa(getseraddr.sin_addr));
+        printf("%s:",buff);
+        printf("%d\n",ntohs(getseraddr.sin_port));
+        
+        /*输出6*/
+        memset(buff,0,MAXLINE);
+        if(inet_ntop(AF_INET, &getseraddr.sin_addr, buff, MAXLINE)==NULL)
+        {
+            printf("error\n");
+            close(connect_fd);
+            return FAILURE;
+        }
+        else
+        {
             printf("%s:",buff);
             printf("%d\n",ntohs(getseraddr.sin_port));
-            /*输出4*/
-            memset(buff,0,MAXLINE);
-            if(inet_ntop(AF_INET, &getcliaddr.sin_addr, buff, MAXLINE)==NULL)
-            {
-                printf("error\n");
-                close(connect_fd);
-                return FAILURE;
-            }
-            else
-            {
-	        printf("%s:",buff);
-                printf("%d\n",ntohs(getseraddr.sin_port));
-            }
+        }
 
-            /* 获得客户端地址 */
-            if(getpeername(connect_fd, (struct sockaddr *)&getseraddr, (socklen_t *)&len)!=0)
-            {
-                printf("getsockname err\n");
-                close(connect_fd);
-                return FAILURE;
-            }
-            /* 输出5 */
-            memset(buff,0,MAXLINE);
-            strcpy(buff,inet_ntoa(getseraddr.sin_addr));
-            printf("%s:",buff);
-            printf("%d\n",ntohs(getseraddr.sin_port));
-            
-            /*输出6*/
-            memset(buff,0,MAXLINE);
-            if(inet_ntop(AF_INET, &getseraddr.sin_addr, buff, MAXLINE)==NULL)
-            {
-                printf("error\n");
-                close(connect_fd);
-                return FAILURE;
-            }
-            else
-            {
-	            printf("%s:",buff);
-                printf("%d\n",ntohs(getseraddr.sin_port));
-	        }
-
-            if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
-                perror("send error");  
-            /*    
-            if(write(connect_fd, "Hello,you are connected!\n", 26) == -1)  
-                perror("send error");  
-            */    
-            close(connect_fd);  
-            exit(0);  
-            }  
+        if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
+            perror("send error");  
+        /*    
+        if(write(connect_fd, "Hello,you are connected!\n", 26) == -1)  
+            perror("send error");  
+        */    
+        close(connect_fd);  
+        exit(0);  
+        }  
        
         close(connect_fd);  
     }
