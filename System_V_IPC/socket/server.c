@@ -8,6 +8,8 @@
 #include<netinet/in.h>  
 #include<arpa/inet.h>
 #include<signal.h>
+#include<sys/select.h>
+#include<time.h>
 
 #define DEFAULT_PORT 8000  
 #define MAXLINE 4096  
@@ -222,6 +224,7 @@ int main(int argc, char** argv)
             close(socket_fd); //关闭监听socket
 
     int iBytesRcved = 0 ;
+    int iRet;
     time_t start = 0;
     if( TIMEOUT > 0 )
         start = time(NULL);
@@ -239,7 +242,7 @@ int main(int argc, char** argv)
          iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
          if (iRet < 0)
          {
-             printf("Socket select is failed: %d\n", errno,strerror(errno));
+             printf("Socket select is failed: errno=[%d-%s]\n", errno,strerror(errno));
              return FAILURE;
          }
          /* 超时 */
@@ -249,22 +252,22 @@ int main(int argc, char** argv)
             return -2;
          }
          time_t now = time(NULL);
-         TIMEOUT = start + TIMEOUT >= now ? TIMEOUT + start - now : 0;
+         TIMEOUT = (start + TIMEOUT >= now) ? (TIMEOUT + start - now) : 0;
         }
-        iLenTmp = read(connect_fd, (char*)buff + iBytesRcved, MAXLINE - iBytesRcved);
-        if (iLenTmp == -1)
+        receivelen = read(connect_fd, (char*)buff + iBytesRcved, MAXLINE - iBytesRcved);
+        if (receivelen == -1)
         {
             printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
             return FAILURE;
         }
 
-        if( iLenTmp == 0)
+        if( receivelen == 0)
         {
            printf("read() peer disconnect, errno=[%d-%s]\n", errno, strerror(errno));
-           /* iLenTmp为0是由于网络断开需重新建立socket链接*/
+           /* receivelen为0是由于网络断开需重新建立socket链接*/
            return 1;
         }
-        iBytesRcved += iLenTmp;
+        iBytesRcved += receivelen;
    }while( iBytesRcved < MAXLINE );
    
 
