@@ -15,7 +15,6 @@
 #define MAXLINE 4096  
 #define FAILURE -1
 sigset_t sigSet;
-#define TIMEOUT 30
 
 void sigChildHandler(int signo)
 {
@@ -225,19 +224,20 @@ int main(int argc, char** argv)
 
     int iBytesRcved = 0 ;
     int iRet;
+    int iTimeOut = 30;
     time_t start = 0;
-    if( TIMEOUT > 0 )
+    if( iTimeOut > 0 )
         start = time(NULL);
 
     do
     {
-      if( TIMEOUT > 0 )
+      if( iTimeOut > 0 )
       {
          fd_set events;
          struct timeval tm;
          FD_ZERO(&events);
          FD_SET(connect_fd, &events);
-         tm.tv_sec = TIMEOUT;
+         tm.tv_sec = iTimeOut;
          tm.tv_usec = 0;
          iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
          if (iRet < 0)
@@ -252,9 +252,11 @@ int main(int argc, char** argv)
             return -2;
          }
          time_t now = time(NULL);
-         TIMEOUT = (start + TIMEOUT >= now) ? (TIMEOUT + start - now) : 0;
+         iTimeOut = start + iTimeOut >= now ? iTimeOut + start - now : 0;
         }
         receivelen = read(connect_fd, (char*)buff + iBytesRcved, MAXLINE - iBytesRcved);
+        buff[receivelen] = '\0';  
+        printf("recv msg from client: %s\n", buff);  
         if (receivelen == -1)
         {
             printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
