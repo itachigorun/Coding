@@ -13,6 +13,7 @@
 #define MAXLINE 4096  
 #define FAILURE -1
 sigset_t sigSet;
+#define TIMEOUT 30
 
 void sigChildHandler(int signo)
 {
@@ -219,6 +220,54 @@ int main(int argc, char** argv)
         //向客户端发送回应数据  
         if(fork() == 0){
             close(socket_fd); //关闭监听socket
+
+    int iBytesRcved = 0 ;
+    time_t start = 0;
+    if( TIMEOUT > 0 )
+        start = time(NULL);
+
+    do
+    {
+      if( TIMEOUT > 0 )
+      {
+         fd_set events;
+         struct timeval tm;
+         FD_ZERO(&events);
+         FD_SET(connect_fd, &events);
+         tm.tv_sec = TIMEOUT;
+         tm.tv_usec = 0;
+         iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
+         if (iRet < 0)
+         {
+             printf("Socket select is failed: %d\n", errno,strerror(errno));
+             return FAILURE;
+         }
+         /* 超时 */
+         if (iRet == 0)
+         {
+            printf("Socket read timeout\n");
+            return -2;
+         }
+         time_t now = time(NULL);
+         TIMEOUT = start + TIMEOUT >= now ? TIMEOUT + start - now : 0;
+        }
+        iLenTmp = read(connect_fd, (char*)buff + iBytesRcved, MAXLINE - iBytesRcved);
+        if (iLenTmp == -1)
+        {
+            printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
+            return FAILURE;
+        }
+
+        if( iLenTmp == 0)
+        {
+           printf("read() peer disconnect, errno=[%d-%s]\n", errno, strerror(errno));
+           /* iLenTmp为0是由于网络断开需重新建立socket链接*/
+           return 1;
+        }
+        iBytesRcved += iLenTmp;
+   }while( iBytesRcved < MAXLINE );
+   
+
             memset(buff,0,MAXLINE);
             //接受客户端传过来的数据  
             receivelen = recv(connect_fd, buff, MAXLINE, 0);  
