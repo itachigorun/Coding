@@ -226,6 +226,7 @@ int main(int argc, char** argv)
     int iRet;
     int iTimeOut = 30;
     time_t start = 0;
+    int maxSize = 100;
     if( iTimeOut > 0 )
         start = time(NULL);
 
@@ -254,9 +255,8 @@ int main(int argc, char** argv)
          time_t now = time(NULL);
          iTimeOut = start + iTimeOut >= now ? iTimeOut + start - now : 0;
         }
-        receivelen = read(connect_fd, (char*)buff + iBytesRcved, MAXLINE - iBytesRcved);
-        buff[receivelen] = '\0';  
-        printf("recv msg from client: %s\n", buff);  
+        receivelen = read(connect_fd, (char*)buff + iBytesRcved, maxSize - iBytesRcved);
+
         if (receivelen == -1)
         {
             printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
@@ -270,7 +270,9 @@ int main(int argc, char** argv)
            return 1;
         }
         iBytesRcved += receivelen;
-   }while( iBytesRcved < MAXLINE );
+   }while( iBytesRcved < maxSize );
+        buff[maxSize] = '\0';  
+        printf("recv msg from client: %s\n", buff);  
    
 
             memset(buff,0,MAXLINE);
