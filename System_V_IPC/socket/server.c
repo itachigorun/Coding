@@ -11,6 +11,31 @@
 #define DEFAULT_PORT 8000  
 #define MAXLINE 4096  
 #define FAILURE -1
+
+void deamonInit()
+{
+	int i;
+	pid_t pid;
+
+	pid = fork();
+	if (pid < 0) exit(1);
+	if (pid != 0) exit(0);
+
+	setsid();
+
+	signal(SIGHUP, SIG_IGN);
+
+	pid = fork();
+	if (pid < 0) exit(1);
+	if (pid != 0) exit(0);
+
+	chdir("/");
+	umask(0);
+	
+	for (i = 0; i < 64; i++) close(i);
+	
+}
+
 int main(int argc, char** argv)
 {  
     int socket_fd, connect_fd;  
@@ -21,6 +46,8 @@ int main(int argc, char** argv)
     int flag = 1;
     struct linger lingopt;
 
+    deamonInit();
+    
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  
         printf("create socket error: %s(errno: %d)\n",strerror(errno),errno);  
         exit(0);  
