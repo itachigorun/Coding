@@ -1,13 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <poll.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<errno.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/socket.h>
+#include<poll.h>
+#include<unistd.h>
+#include<sys/types.h>
 
 #define IPADDRESS   "127.0.0.1"
 #define PORT        8787

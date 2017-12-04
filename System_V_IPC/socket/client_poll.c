@@ -1,12 +1,13 @@
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <poll.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include<netinet/in.h>
+#include<sys/socket.h>
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<poll.h>
+#include<time.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<arpa/inet.h>
 
 #define MAXLINE     1024
 #define IPADDRESS   "127.0.0.1"
