@@ -31,16 +31,17 @@ void deamonInit()
 	
 	for (i = 0; i < 64; i++) close(i);
 	
+#if 0
     fd0 = open("/dev/null", O_RDWR);
     fd1 = dup(0);
     fd2 = dup(0);
     if(fd0 != 0 || fd != 1 || fd != 2){
         syslog(LOG_ERR, "unexpected file descriptors %d %d %d", fd0, fd1, fd2);
         exit(1);
-    }
+#endif
 
 
-#if 0
+
     int fd = open( "/dev/null", O_RDWR );  
     /* 
      * handle failure of open() somehow 
@@ -52,6 +53,6 @@ void deamonInit()
     {  
         close( fd );  
     }  
-#endif
+
 
 }

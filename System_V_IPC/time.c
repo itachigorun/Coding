@@ -75,7 +75,7 @@ int tm_isdst; /* 夏令时标识符，实行夏令时的时候，tm_isdst为正�
     struct tm *timenow;
     time(&now);
 	timenow = gmtime(&now); /* 此函数返回的时间日期未经时区转换，而是UTC时间 */
-	printf("%s", asctime(timenow);  /* 将UTC时间转换成当地时间,返回的字符串是一个ASCII码字符集的字符串 */
+	printf("%s", asctime(timenow);  /* 将UTC时间转换,返回的字符串是一个ASCII码字符集的字符串 */
 
 
 /* ------------------------------------------------------------------------------------------ */
