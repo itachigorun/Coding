@@ -38,4 +38,20 @@ void deamonInit()
         syslog(LOG_ERR, "unexpected file descriptors %d %d %d", fd0, fd1, fd2);
         exit(1);
     }
+
+
+#if 0
+    int fd = open( "/dev/null", O_RDWR );  
+    /* 
+     * handle failure of open() somehow 
+     */  
+    dup2( fd, 0 );  
+    dup2( fd, 1 );  
+    dup2( fd, 2 );  
+    if ( fd > 2 )  
+    {  
+        close( fd );  
+    }  
+#endif
+
 }
