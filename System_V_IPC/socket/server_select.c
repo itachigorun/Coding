@@ -25,8 +25,9 @@ typedef struct server_context_st
     int maxfd;          /*句柄最大值*/
 } server_context_st;
 static server_context_st *s_srv_ctx = NULL;
-/*===========================================================================
- * ==========================================================================*/
+
+
+/*===========================================================================*/
 static int create_server_proc(const char* ip,int port)
 {
     int  fd;
@@ -35,12 +36,6 @@ static int create_server_proc(const char* ip,int port)
     if (fd == -1) {
         fprintf(stderr, "create socket fail,erron:%d,reason:%s\n",
                 errno, strerror(errno));
-        return -1;
-    }
-
-    /*一个端口释放后会等待两分钟之后才能再被使用，SO_REUSEADDR是让端口释放后立即就可以被再次使用。*/
-    int reuse = 1;
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1) {
         return -1;
     }
 
@@ -160,6 +155,7 @@ static void handle_client_proc(int srvfd)
         }
 
         /*开始轮询接收处理服务端和客户端套接字*/
+        /* 一个进程所能打开的最大文件描述符数，可以通过ulimit -n来查询 */
         retval = select(s_srv_ctx->maxfd + 1, readfds, NULL, NULL, &tv);
         if (retval == -1) {
             fprintf(stderr, "select error:%s.\n", strerror(errno));
@@ -215,13 +211,14 @@ int main(int argc,char *argv[])
     srvfd = create_server_proc(IPADDR, PORT);
     if (srvfd < 0) {
         fprintf(stderr, "socket create or bind fail.\n");
-        goto err;
+        server_uninit();
+        return -1;
     }
     /*开始接收并处理客户端请求*/
     handle_client_proc(srvfd);
     server_uninit();
     return 0;
-err:
+
     server_uninit();
     return -1;
 }

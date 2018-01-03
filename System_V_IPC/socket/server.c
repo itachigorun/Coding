@@ -248,62 +248,6 @@ int main(int argc, char** argv)
         if(fork() == 0){
             close(socket_fd); //关闭监听socket
 
-#if 0
-/* select I/O多路复用 */
-        int iBytesRcved = 0 ;
-        int iRet;
-        int iTimeOut = 30;
-        time_t start = 0;
-        int maxSize = 100;
-        if( iTimeOut > 0 )
-            start = time(NULL);
-
-        do
-        {
-        if( iTimeOut > 0 )
-        {
-            fd_set events;
-            struct timeval tm;
-            FD_ZERO(&events);
-            FD_SET(connect_fd, &events);
-            tm.tv_sec = iTimeOut;
-            tm.tv_usec = 0;
-            iRet = select( connect_fd+1, &events, NULL, NULL, &tm);
-            if (iRet < 0)
-            {
-                printf("Socket select is failed: errno=[%d-%s]\n", errno,strerror(errno));
-                return FAILURE;
-            }
-            /* 超时 */
-            if (iRet == 0)
-            {
-                printf("Socket read timeout\n");
-                return -2;
-            }
-            time_t now = time(NULL);
-            iTimeOut = start + iTimeOut >= now ? iTimeOut + start - now : 0;
-            }
-            /* read函数会一直读完100个字节 */
-            receivelen = read(connect_fd, (char*)buff + iBytesRcved, maxSize - iBytesRcved);
-
-            if (receivelen == -1)
-            {
-                printf("read() read() failed, errno=[%d-%s]\n", errno, strerror(errno));
-                return FAILURE;
-            }
-
-            if( receivelen == 0)
-            {
-            printf("read() peer disconnect, errno=[%d-%s]\n", errno, strerror(errno));
-            /* receivelen为0是由于网络断开需重新建立socket链接*/
-            return 1;
-            }
-            iBytesRcved += receivelen;
-        }while( iBytesRcved < maxSize );
-        buff[maxSize] = '\0';  
-        printf("recv msg from client: %s\n", buff);  
-#endif
-
         memset(buff,0,MAXLINE);
         //接受客户端传过来的数据  
         receivelen = recv(connect_fd, buff, MAXLINE, 0);  
