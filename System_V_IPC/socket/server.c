@@ -245,95 +245,96 @@ int main(int argc, char** argv)
         }
 
         //向客户端发送回应数据  
-        if(fork() == 0){
+        if(fork() == 0)
+        {
             close(socket_fd); //关闭监听socket
 
-        memset(buff,0,MAXLINE);
-        //接受客户端传过来的数据  
-        receivelen = recv(connect_fd, buff, MAXLINE, 0);  
-        buff[receivelen] = '\0';  
-        printf("recv msg from client: %s\n", buff);  
-
-        /* 输出1 */
-        memset(buff,0,MAXLINE);
-        strcpy(buff,inet_ntoa(clientaddr.sin_addr));
-        printf("%s:",buff);
-        printf("%d\n",ntohs(getseraddr.sin_port));
-        
-        /*输出2*/
-        memset(buff,0,MAXLINE);
-        if(inet_ntop(AF_INET, &clientaddr.sin_addr, buff, MAXLINE)==NULL)
-        {
-            printf("error\n");
-            close(connect_fd);
-            return FAILURE;
-        }
-        else
-        {
+            memset(buff,0,MAXLINE);
+            //接受客户端传过来的数据  
+            receivelen = recv(connect_fd, buff, MAXLINE, 0);  
+            buff[receivelen] = '\0';  
+            printf("recv msg from client: %s\n", buff);  
+    
+            /* 输出1 */
+            memset(buff,0,MAXLINE);
+            strcpy(buff,inet_ntoa(clientaddr.sin_addr));
             printf("%s:",buff);
             printf("%d\n",ntohs(getseraddr.sin_port));
-        }
-        /* 获得本地地址 */
-        if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
-        {
-            printf("getsockname err\n");
-            close(connect_fd);
-            return FAILURE;
-        }
-        /* 输出3 */
-        memset(buff,0,MAXLINE);
-        strcpy(buff,inet_ntoa(getcliaddr.sin_addr));
-        printf("%s:",buff);
-        printf("%d\n",ntohs(getseraddr.sin_port));
-        /*输出4*/
-        memset(buff,0,MAXLINE);
-        if(inet_ntop(AF_INET, &getcliaddr.sin_addr, buff, MAXLINE)==NULL)
-        {
-            printf("error\n");
-            close(connect_fd);
-            return FAILURE;
-        }
-        else
-        {
-        printf("%s:",buff);
-            printf("%d\n",ntohs(getseraddr.sin_port));
-        }
-
-        /* 获得客户端地址 */
-        if(getpeername(connect_fd, (struct sockaddr *)&getseraddr, (socklen_t *)&len)!=0)
-        {
-            printf("getsockname err\n");
-            close(connect_fd);
-            return FAILURE;
-        }
-        /* 输出5 */
-        memset(buff,0,MAXLINE);
-        strcpy(buff,inet_ntoa(getseraddr.sin_addr));
-        printf("%s:",buff);
-        printf("%d\n",ntohs(getseraddr.sin_port));
-        
-        /*输出6*/
-        memset(buff,0,MAXLINE);
-        if(inet_ntop(AF_INET, &getseraddr.sin_addr, buff, MAXLINE)==NULL)
-        {
-            printf("error\n");
-            close(connect_fd);
-            return FAILURE;
-        }
-        else
-        {
+            
+            /*输出2*/
+            memset(buff,0,MAXLINE);
+            if(inet_ntop(AF_INET, &clientaddr.sin_addr, buff, MAXLINE)==NULL)
+            {
+                printf("error\n");
+                close(connect_fd);
+                return FAILURE;
+            }
+            else
+            {
+                printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+            }
+            /* 获得本地地址 */
+            if(getsockname(connect_fd, (struct sockaddr *)&getcliaddr, (socklen_t *)&len)!=0)
+            {
+                printf("getsockname err\n");
+                close(connect_fd);
+                return FAILURE;
+            }
+            /* 输出3 */
+            memset(buff,0,MAXLINE);
+            strcpy(buff,inet_ntoa(getcliaddr.sin_addr));
             printf("%s:",buff);
             printf("%d\n",ntohs(getseraddr.sin_port));
-        }
+            /*输出4*/
+            memset(buff,0,MAXLINE);
+            if(inet_ntop(AF_INET, &getcliaddr.sin_addr, buff, MAXLINE)==NULL)
+            {
+                printf("error\n");
+                close(connect_fd);
+                return FAILURE;
+            }
+            else
+            {
+            printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+            }
+    
+            /* 获得客户端地址 */
+            if(getpeername(connect_fd, (struct sockaddr *)&getseraddr, (socklen_t *)&len)!=0)
+            {
+                printf("getsockname err\n");
+                close(connect_fd);
+                return FAILURE;
+            }
+            /* 输出5 */
+            memset(buff,0,MAXLINE);
+            strcpy(buff,inet_ntoa(getseraddr.sin_addr));
+            printf("%s:",buff);
+            printf("%d\n",ntohs(getseraddr.sin_port));
+            
+            /*输出6*/
+            memset(buff,0,MAXLINE);
+            if(inet_ntop(AF_INET, &getseraddr.sin_addr, buff, MAXLINE)==NULL)
+            {
+                printf("error\n");
+                close(connect_fd);
+                return FAILURE;
+            }
+            else
+            {
+                printf("%s:",buff);
+                printf("%d\n",ntohs(getseraddr.sin_port));
+            }
 
-        if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
-            perror("send error");  
-        /*    
-        if(write(connect_fd, "Hello,you are connected!\n", 26) == -1)  
-            perror("send error");  
-        */    
-        close(connect_fd);  
-        exit(0);  
+            if(send(connect_fd, "Hello,you are connected!\n", 26,0) == -1)  
+                perror("send error");  
+            /*    
+            if(write(connect_fd, "Hello,you are connected!\n", 26) == -1)  
+                perror("send error");  
+            */    
+            close(connect_fd);  
+            exit(0);  
         }  
        
         close(connect_fd);  
